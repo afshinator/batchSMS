@@ -1,14 +1,33 @@
-import { Image } from "expo-image";
-import { StyleSheet } from "react-native";
-
 import { HelloWave } from "@/components/hello-wave";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
+import { hasStorageKeys } from "@/components/storageUtils";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+
+import { Image } from "expo-image";
 import { Link } from "expo-router";
+import { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
 import CSVFilePicker from "./CSVFilePicker";
 
+const apiKeys = ["accountSID", "AuthToken", "TwilioPhoneNumber"];
+
 export default function HomeScreen() {
+  const [hasApiKeys, setHasApiKeys] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkStorage = async () => {
+      const exists = await hasStorageKeys(apiKeys);
+      setHasApiKeys(exists);
+      setLoading(false);
+    };
+
+    checkStorage();
+  }, []);
+
+  const keysAllSet = !Object.values(hasApiKeys).includes(false);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -23,10 +42,22 @@ export default function HomeScreen() {
         <ThemedText type="title">Batch SMS!</ThemedText>
         <HelloWave />
       </ThemedView>
+      {!keysAllSet && (
+        <ThemedView style={styles.stepContainer}>
+          <ThemedText type="subtitle">
+            Step 0: Go to Settings and enter your api keys for Twilio
+          </ThemedText>
+          <ThemedText>
+            Click on the Settings Tab on the bottom of the screen and fill out
+            the information there.
+          </ThemedText>
+        </ThemedView>
+      )}
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Pick a csv file on this device</ThemedText>
-        <CSVFilePicker />
-        
+        <ThemedText type="subtitle">
+          Step 1: Pick a csv file on this device
+        </ThemedText>
+        <CSVFilePicker disabled={!keysAllSet} />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <Link href="/modal">
@@ -60,6 +91,7 @@ export default function HomeScreen() {
           {`Tap the Explore tab to learn more about what's included in this starter app.`}
         </ThemedText>
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
         <ThemedText>
@@ -73,7 +105,6 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
-      
     </ParallaxScrollView>
   );
 }

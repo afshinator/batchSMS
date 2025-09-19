@@ -21,7 +21,7 @@ const formatLastModified = (timestamp: number) => {
   return `${month}/${day}/${year} ${hours}:${minutes}`;
 };
 
-export default function CSVFilePicker() {
+export default function CSVFilePicker({ disabled = false } = {}) {
   const [selectedFile, setSelectedFile] = useState<CsvFileState>(null);
   const buttonPrompt = selectedFile
     ? "Browse for a different CSV file"
@@ -47,7 +47,11 @@ export default function CSVFilePicker() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={pickCSVFile}>
+      <TouchableOpacity
+        style={disabled ? styles.buttonDisabled : styles.button}
+        onPress={pickCSVFile}
+        disabled={disabled}
+      >
         <Text style={styles.buttonText}>{buttonPrompt}</Text>
       </TouchableOpacity>
 
@@ -81,6 +85,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#007AFF",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonDisabled: {
+    backgroundColor: "#999",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
