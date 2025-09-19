@@ -1,16 +1,16 @@
+
 import { HelloWave } from "@/components/hello-wave";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { hasStorageKeys } from "@/components/storageUtils";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 
+import { STORAGE_KEYS } from "@/constants";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import CSVFilePicker from "./CSVFilePicker";
-
-const apiKeys = ["accountSID", "AuthToken", "TwilioPhoneNumber"];
 
 export default function HomeScreen() {
   const [hasApiKeys, setHasApiKeys] = useState(false);
@@ -18,7 +18,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const checkStorage = async () => {
-      const exists = await hasStorageKeys(apiKeys);
+      const exists = await hasStorageKeys(STORAGE_KEYS.twilio);
       setHasApiKeys(exists);
       setLoading(false);
     };
@@ -48,7 +48,8 @@ export default function HomeScreen() {
             Step 0: Go to Settings and enter your api keys for Twilio
           </ThemedText>
           <ThemedText>
-            Click on the Settings Tab on the bottom of the screen and fill out
+            Click on the Settings Tab 
+            on the bottom of the screen and fill out
             the information there.
           </ThemedText>
         </ThemedView>
